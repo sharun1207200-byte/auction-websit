@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#11120f">
+  <meta name="description" content="A simple, private player auction board for your team.">
+  <title>Auction</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Auction home"><span class="brand-mark">A</span><span>Auction</span></a>
+      <div class="topbar-right"><div class="participant-badge" id="participantBadge" hidden><span id="participantName"></span><strong id="participantBalance"></strong></div><button class="admin-button" id="adminButton"><span class="lock-icon">▣</span><span id="adminButtonText">Admin sign in</span></button></div>
+    </header>
+
+    <main>
+      <section class="hero"><div class="simple-title">Auction<span>.</span></div>
+        
+      </section>
+
+      <section class="players-section" aria-label="Players"><div class="player-grid" id="playerGrid"></div><div class="empty-state" id="emptyState"><div class="empty-icon">✳</div><h3>No players yet</h3><p>Players added by the admin will appear here.</p></div></section>
+
+      <section class="admin-panel" id="adminPanel" hidden>
+        <div class="admin-panel-heading"><div><div class="eyebrow section-eyebrow"><span class="eyebrow-line"></span> ADMIN ONLY</div><h2>Auction desk<span class="heading-dot">.</span></h2><p class="admin-subtitle">Add players, mark sales and keep the results to yourself.</p></div><button class="text-button" id="adminSignOut">Sign out ↗</button></div>
+        <div class="admin-columns">
+          <div class="admin-card admin-tools-card"><form class="add-player-card" id="addPlayerForm"><div class="card-title-row"><div class="card-icon">＋</div><div><h3>Build the lineup</h3><p>Add each player one at a time. Bidding starts only when you press the button below.</p></div></div><label class="photo-drop" for="photoInput" id="photoDrop"><input id="photoInput" type="file" accept="image/*" hidden><span class="photo-plus">＋</span><span class="photo-text">Choose one player photo</span><span class="photo-hint">JPG or PNG · max 5 MB</span><img class="photo-preview" id="photoPreview" alt="Selected player photo" hidden></label><label class="field-label" for="playerNameInput">PLAYER NAME</label><input class="text-input" id="playerNameInput" maxlength="50" placeholder="Enter the player name" required><button class="primary-button" type="submit">Add player to lineup <span>＋</span></button></form><div class="pending-lineup"><div class="pending-heading"><strong>Players waiting to start</strong><span id="pendingPlayerCount">0</span></div><div class="pending-player-list" id="pendingPlayerList"></div><button class="primary-button start-auction-button" id="startBiddingButton" type="button" disabled>Start bidding <span>↗</span></button><button class="player-action clear-lineup-button" id="clearLineupButton" type="button" disabled>Clear all players</button></div><form class="budget-form" id="budgetForm"><div class="admin-divider"></div><label class="field-label" for="budgetInput">BIDDER BUDGET (₹ EACH)</label><p>Sets the total purse for everyone, including current participants.</p><div class="budget-row"><input class="text-input" id="budgetInput" type="number" min="1" max="100000000" step="1" required><button class="player-action sell" type="submit">Set budget</button></div><div class="admin-divider"></div><label class="field-label" for="playersPerBatchInput">PLAYERS IN EACH RANDOM GROUP</label><p>With random group mode on, this many random players appear together. Turn it off to show the whole lineup.</p><input class="text-input" id="playersPerBatchInput" type="number" min="1" max="40" step="1" value="1"><div class="admin-divider"></div><div class="auction-switches"><label class="auction-switch"><span><strong>Public bidding</strong><small>Allow participants to bid.</small></span><input id="biddingToggle" type="checkbox" checked><span class="switch-track"></span></label><label class="auction-switch"><span><strong>Random group mode</strong><small>On shows the selected number; off shows all players.</small></span><input id="randomGroupToggle" type="checkbox" checked><span class="switch-track"></span></label><label class="auction-switch"><span><strong>Auto-sale</strong><small>Sell each leading player after 5 seconds without a new bid.</small></span><input id="autoSaleToggle" type="checkbox" checked><span class="switch-track"></span></label></div></form></div>
+          <section class="admin-card sales-card"><div class="card-title-row"><div class="card-icon sales-icon">↗</div><div><h3>Sales register</h3><p>Visible only while you’re signed in as admin.</p></div></div><div class="sales-table-wrap"><table class="sales-table"><thead><tr><th>PLAYER</th><th>SOLD TO</th><th>PRICE</th></tr></thead><tbody id="salesTableBody"></tbody></table><div class="sales-empty" id="salesEmpty" hidden>No players sold yet. Mark one as sold from the roster.</div></div><div class="sales-total"><span>TOTAL AUCTION VALUE</span><strong id="salesTotal">₹0</strong></div></section>
+        </div><p class="storage-note"><span>ⓘ</span> Bids and players are shared with everyone through the auction server. Keep the server running during your auction.</p>
+      </section>
+    </main>
+    <footer class="footer"><span>AUCTION</span></footer>
+  </div>
+
+  <dialog class="dialog" id="adminDialog"><form class="dialog-card" id="adminLoginForm"><button class="dialog-close" type="button" id="closeDialog" aria-label="Close">×</button><div class="dialog-symbol">▣</div><div class="eyebrow dialog-eyebrow">ADMIN ACCESS</div><h2>Welcome back.</h2><p>Enter the admin passcode to manage the auction.</p><label class="field-label" for="passcodeInput">PASSCODE</label><input class="text-input" id="passcodeInput" type="password" inputmode="numeric" autocomplete="current-password" placeholder="Enter passcode" required><p class="login-error" id="loginError" hidden>That passcode doesn’t match. Try again.</p><button class="primary-button" type="submit">Unlock admin <span>↗</span></button></form></dialog>
+  <dialog class="dialog" id="saleDialog"><form class="dialog-card" id="saleForm"><button class="dialog-close" type="button" data-close-sale aria-label="Close">×</button><div class="dialog-symbol sale-symbol">↗</div><div class="eyebrow dialog-eyebrow">RECORD A SALE</div><h2 id="saleHeading">Sell this player.</h2><p id="saleHelp">The current highest bidder wins at their bid amount.</p><input type="hidden" id="salePlayerId"><label class="field-label" for="buyerInput">SOLD TO</label><input class="text-input" id="buyerInput" maxlength="50" placeholder="Buyer name" required><label class="field-label second-label" for="priceInput">WINNING BID (₹)</label><input class="text-input" id="priceInput" type="number" min="0" step="1" placeholder="1" required><button class="primary-button" type="submit">Confirm sale <span>↗</span></button></form></dialog>
+  <dialog class="dialog name-dialog" id="nameDialog"><form class="dialog-card" id="nameForm"><div class="dialog-symbol">✳</div><div class="eyebrow dialog-eyebrow">JOIN THE AUCTION</div><h2>What’s your name?</h2><p>Enter your name to view the auction and place bids. Everyone starts with the same budget.</p><label class="field-label" for="visitorNameInput">YOUR NAME</label><input class="text-input" id="visitorNameInput" maxlength="40" placeholder="Enter your name" autocomplete="name" required><p class="login-error" id="nameError" hidden></p><button class="primary-button" type="submit">Enter auction <span>↗</span></button></form></dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>
+
